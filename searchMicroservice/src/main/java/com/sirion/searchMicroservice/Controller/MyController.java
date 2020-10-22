@@ -71,20 +71,27 @@ public class MyController {
         RestTemplate restTemplate = new RestTemplate();
         final String baseUrl = "http://localhost:8961/technology/getTechnologyId";
 
+
         URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl).queryParam("name",skill).build().toUri();
 
         ResponseEntity<Long[]> result = restTemplate.getForEntity(uri,Long[].class);
+
+        System.out.println("ffff");
 
 
         List<MentorSkill> mentorSkillsList = mentorSkillService.getAllMentorSkill();
 
         List<String> list = new ArrayList<>();
 
+        System.out.println(result.getBody());
+
         for (long skillId : result.getBody()){
-//            System.out.println(l);
+//            System.out.println(skillId);
             for (MentorSkill mentorSkill:mentorSkillsList){
                 if(mentorSkill.getSkillId() == skillId){
-                    list.add(mentorService.findById(mentorSkill.getId()).getUsername());
+//                    System.out.println(mentorSkill.getSkillId() + "--" + skillId);
+                    System.out.println(mentorSkill.getMentorId());
+                    list.add(mentorService.findById(mentorSkill.getMentorId()).getUsername());
                 }
             }
 
@@ -105,11 +112,15 @@ public class MyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        System.out.println("ffff");
+
         List<MentorSkill> mentorSkills = mentorSkillService.getMentorSkills(mentorId);
 
         if (mentorSkills == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        System.out.println("rrrr");
 
         for (MentorSkill mentorSkill : mentorSkills){
 

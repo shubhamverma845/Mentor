@@ -1,6 +1,7 @@
 package com.sirion.searchMicroservice.Controller;
 
 
+import com.sirion.searchMicroservice.Model.Mentor;
 import com.sirion.searchMicroservice.Model.MentorSkill;
 import com.sirion.searchMicroservice.Service.MentorService;
 import com.sirion.searchMicroservice.Service.MentorSkillService;
@@ -31,6 +32,13 @@ public class MentorSkillController {
 
     @PostMapping(value = "/createMentorSkill", headers = "Accept=application/json")
     public ResponseEntity<Void> createMentorSkill(@RequestBody MentorSkill mentorSkill) {
+
+        Mentor mentor = mentorService.findById(mentorSkill.getMentorId());
+
+        if(mentor == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         mentorSkillService.createMentorSkill(mentorSkill);
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(headers, HttpStatus.CREATED);

@@ -111,4 +111,5 @@ public class UserController {
     public void deleteUserById(@PathVariable("id") long id){
         userService.deleteUserById(id);
     }
+
 }
