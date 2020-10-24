@@ -15,6 +15,12 @@ public interface TrainingRepository extends JpaRepository<Training, Long>{
     @Query(value = "UPDATE training_table SET approved = TRUE WHERE id = ?1", nativeQuery = true)
     void updateStatusById(long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE training_table SET under_progress = FALSE WHERE id = ?1", nativeQuery = true)
+    void updateUnderProgressById(long id);
+
+
     List<Training> findByUserIdAndUnderProgressFalse(long userId);
     List<Training> findByMentorIdAndUnderProgressFalse(long mentorId);
     List<Training> findByUserIdAndUnderProgressTrue(long userId);

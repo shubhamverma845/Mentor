@@ -14,4 +14,6 @@ public interface TrainingService {
     List<Training> findUnderProgressTrainingsByUserId(long userId);
 
     List<Training> findUnderProgressTrainingsByMentorId(long mentorId);
+
+    void finalizeTrainingById(long id);
 }

@@ -40,6 +40,11 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
+    public void finalizeTrainingById(long id) {
+        trainingRepository.updateUnderProgressById(id);
+    }
+
+    @Override
     public List<Training> findUnderProgressTrainingsByUserId(long userId) {
         return trainingRepository.findByUserIdAndUnderProgressTrue(userId);
     }

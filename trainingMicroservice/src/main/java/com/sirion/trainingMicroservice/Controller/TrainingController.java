@@ -44,8 +44,6 @@ public class TrainingController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-//        System.out.println("dounf");
-
         trainingService.updateStatusById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -54,7 +52,6 @@ public class TrainingController {
     public Training getTrainingById(@PathVariable("id") long id){
         return trainingService.findById(id);
     }
-
 
     @GetMapping(value = "/getCompletedTrainingsByUserId/{userId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getCompletedTrainingsByUserId(@PathVariable("userId") long userId){
@@ -88,4 +85,16 @@ public class TrainingController {
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
+    @PutMapping(value = "/finalizeTraining/{id}", headers = "Accept=application/json")
+    public ResponseEntity<Training> finalizeTraining(@PathVariable("id") long id){
+
+        Training training = trainingService.findById(id);
+        if(training == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        trainingService.finalizeTrainingById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
 }
