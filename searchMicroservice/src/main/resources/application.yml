@@ -1,0 +1,14 @@
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8901/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 20
+    lease-renewal-interval-in-seconds: 10
+
+spring:
+  application:
+    name: "search-mircoservice"
