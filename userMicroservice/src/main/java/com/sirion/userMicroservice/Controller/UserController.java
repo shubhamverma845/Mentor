@@ -1,6 +1,8 @@
 package com.sirion.userMicroservice.Controller;
 
 
+import com.sirion.userMicroservice.Dto.MentorPOJO;
+import com.sirion.userMicroservice.Dto.UserDto;
 import com.sirion.userMicroservice.Model.User;
 import com.sirion.userMicroservice.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,34 +17,6 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-class MentorPOJO{
-    long id;
-    String username;
-
-    public MentorPOJO() {
-    }
-
-    public MentorPOJO(long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-}
 
 @RestController
 @RequestMapping(value = "/user")
@@ -51,36 +25,51 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    //createUser
+    //createUser or signUp
     @PostMapping(value = "/createUser", headers = "Accept=application/json")
-    public void createUser(@RequestBody User user){
+    public ResponseEntity<String> createUser(@RequestBody User user){
+
         userService.createUser(user);
+        return new ResponseEntity<>("User Created", HttpStatus.OK);
+    }
+
+    //signUp
+    @PostMapping(value = "/signUp", headers = "Accept=application/json")
+    public ResponseEntity<String> createUser(@RequestBody UserDto userDto){
+
+        User user1 = userService.getByUsername(userDto.getUsername());
+
+        if (user1 != null){
+            return new ResponseEntity<>("Username already exists!!", HttpStatus.CONFLICT);
+        }
+
+        User user = userService.signUpUser(userDto);
 
         if(user.getlORm().equals("m")){
 
-            RestTemplate restTemplate = new RestTemplate();
-
-            final String baseUrl = "http://localhost:8962/mentor/createMentor";
-            URI uri =  null;
-            try {
-                uri = new URI(baseUrl);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-
-            MentorPOJO m = new MentorPOJO();
-            m.setId(user.getId());
-            m.setUsername(user.getFirstName() + "_" + user.getLastName());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<MentorPOJO> entity = new HttpEntity<>(m,headers);
-
-            assert uri != null;
-            ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-
-//            System.out.println(result.getBody());
+            MentorPOJO mentorPOJO = new MentorPOJO(user.getId(), user.getUsername());
+            createMentor(mentorPOJO);
+//            RestTemplate restTemplate = new RestTemplate();
+//
+//            final String baseUrl = "http://localhost:8962/mentor/createMentor";
+//            URI uri =  null;
+//            try {
+//                uri = new URI(baseUrl);
+//            } catch (URISyntaxException e) {
+//                e.printStackTrace();
+//            }
+//
+//            MentorPOJO m = new MentorPOJO(user.getId(), user.getUsername());
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+//            HttpEntity<MentorPOJO> entity = new HttpEntity<>(m,headers);
+//
+//            assert uri != null;
+//            ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
         }
+
+        return new ResponseEntity<>("User Created", HttpStatus.OK);
     }
 
     @PostMapping(value = "/createMultipleUsers", headers = "Accept=application/json")
@@ -102,7 +91,7 @@ public class UserController {
         return new ResponseEntity<>(user, OK);
     }
 
-    @GetMapping(value = "getAllUsers", headers = "Accept=application/json")
+    @GetMapping(value = "/getAllUsers", headers = "Accept=application/json")
     public List<User> getAllUsers(){
         return userService.getAllUser();
     }
@@ -110,6 +99,27 @@ public class UserController {
     @DeleteMapping(value = "/deleteUser/{id}", headers = "Accept=application/json")
     public void deleteUserById(@PathVariable("id") long id){
         userService.deleteUserById(id);
+    }
+
+    //method to create Mentor
+    public void createMentor(MentorPOJO mentorPOJO){
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        final String baseUrl = "http://localhost:8962/mentor/createMentor";
+        URI uri =  null;
+        try {
+            uri = new URI(baseUrl);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<MentorPOJO> entity = new HttpEntity<>(mentorPOJO,headers);
+
+        assert uri != null;
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
     }
 
 }

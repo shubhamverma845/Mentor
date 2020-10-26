@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DynamicInsert
@@ -15,17 +16,59 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
+    @Column
+    String password;
+
+    @NotNull
     @Column
     String firstName;
 
+    @NotNull
+    @Column
+    String username;
+
+    @NotNull
     @Column
     String lastName;
 
     @ColumnDefault("true")
     boolean active;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column
     String lORm;
+
+    public User() {
+    }
+
+    public User(@NotNull String password,
+                @NotNull String firstName,
+                @NotNull String username,
+                @NotNull String lastName,
+                @NotNull String lORm) {
+        this.password = password;
+        this.firstName = firstName;
+        this.username = username;
+        this.lastName = lastName;
+        this.lORm = lORm;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public long getId() {
         return id;

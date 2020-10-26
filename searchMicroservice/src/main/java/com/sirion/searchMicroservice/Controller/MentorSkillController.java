@@ -28,8 +28,6 @@ public class MentorSkillController {
         return mentorSkillService.getAllMentorSkill();
     }
 
-
-
     @PostMapping(value = "/createMentorSkill", headers = "Accept=application/json")
     public ResponseEntity<Void> createMentorSkill(@RequestBody MentorSkill mentorSkill) {
 
