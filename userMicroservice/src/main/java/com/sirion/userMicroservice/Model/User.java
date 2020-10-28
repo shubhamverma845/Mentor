@@ -106,6 +106,10 @@ public class User {
         return lORm;
     }
 
+    public String getRole(){
+        return this.getlORm().equals("m") ? "MENTOR":"LEARNER";
+    }
+
     public void setlORm(String lORm) {
         this.lORm = lORm;
     }
