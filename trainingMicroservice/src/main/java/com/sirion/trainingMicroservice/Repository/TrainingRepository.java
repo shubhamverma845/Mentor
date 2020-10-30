@@ -12,12 +12,12 @@ public interface TrainingRepository extends JpaRepository<Training, Long>{
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE training_table SET approved = TRUE WHERE id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE training_table SET approved = TRUE, start_date = CURRENT_TIMESTAMP WHERE id = ?1", nativeQuery = true)
     void updateStatusById(long id);
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE training_table SET under_progress = FALSE WHERE id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE training_table SET under_progress = FALSE, end_date = CURRENT_TIMESTAMP WHERE id = ?1", nativeQuery = true)
     void updateUnderProgressById(long id);
 
 

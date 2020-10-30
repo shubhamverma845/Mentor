@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TechnologyServiceImp implements TechnologyService {
@@ -25,7 +26,7 @@ public class TechnologyServiceImp implements TechnologyService {
     }
 
     @Override
-    public Technology findById(long id) {
+    public Technology findById(long id) throws NoSuchElementException{
         return technologyRepository.findById(id).get();
     }
 
@@ -53,20 +54,7 @@ public class TechnologyServiceImp implements TechnologyService {
     @Override
     public List<Technology> getTechnologies(Integer pageNo, Integer pageSize, String sortBy, String ord) {
 
-        Pageable paging;
+        return technologyRepository.getTechnologies(pageNo, pageSize, sortBy, ord);
 
-        if (ord.equals("asc")){
-            paging = (Pageable) PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC,sortBy));
-        } else {
-            paging = (Pageable) PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC,sortBy));
-        }
-
-        Page<Technology> pagedResult = technologyRepository.findAll((org.springframework.data.domain.Pageable) paging);
-
-        if(pagedResult.hasContent()) {
-            return pagedResult.getContent();
-        } else {
-            return new ArrayList<>();
-        }
     }
 }

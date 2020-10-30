@@ -1,10 +1,6 @@
 package com.sirion.skillsMicroservice.Model;
 
-import com.sun.xml.internal.fastinfoset.util.StringArray;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 
@@ -25,9 +21,9 @@ public class Technology {
     long duration;
 
     @Column
-    String[] preReq;
+    String preReq;
 
-    @ColumnDefault("true")
+    @Column(columnDefinition = "boolean default true")
     boolean status;
 
     public long getId() {
@@ -54,11 +50,11 @@ public class Technology {
         this.duration = duration;
     }
 
-    public String[] getPreReq() {
+    public String getPreReq() {
         return preReq;
     }
 
-    public void setPreReq(String[] preReq) {
+    public void setPreReq(String preReq) {
         this.preReq = preReq;
     }
 

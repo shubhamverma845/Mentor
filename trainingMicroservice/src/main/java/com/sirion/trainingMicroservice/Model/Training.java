@@ -1,10 +1,11 @@
 package com.sirion.trainingMicroservice.Model;
 
 
-import org.hibernate.annotations.ColumnDefault;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @DynamicInsert
@@ -24,8 +25,18 @@ public class Training {
     @Column
     long skillId;
 
-    @ColumnDefault("2.5")
+    @Column(columnDefinition = "real default 2.5")
     float rating;
+
+    @Column(columnDefinition = "timestamp without time zone default current_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    Date startDate;
+
+    @Column(columnDefinition = "timestamp without time zone default current_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    Date endDate;
 
     //approved--true
     @Column(columnDefinition = "boolean default false")
@@ -34,6 +45,23 @@ public class Training {
     //completed--false
     @Column(columnDefinition = "boolean default true")
     boolean underProgress;
+
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public long getId() {
         return id;

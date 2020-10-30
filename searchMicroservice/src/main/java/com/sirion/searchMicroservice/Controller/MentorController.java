@@ -36,6 +36,7 @@ public class MentorController {
 
     @PostMapping(value = "/createMentor", headers = "Accept=application/json")
     public ResponseEntity<Void> createMentor(@RequestBody Mentor mentor){
+
         mentorService.createMentor(mentor);
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
@@ -63,6 +64,7 @@ public class MentorController {
 
     @PutMapping(value = "/updateMentor", headers = "Accept=application/json")
     public ResponseEntity<String> updateMentor(@RequestBody Mentor currentMentor){
+
         Mentor mentor = mentorService.findById(currentMentor.getId());
         if (mentor == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
