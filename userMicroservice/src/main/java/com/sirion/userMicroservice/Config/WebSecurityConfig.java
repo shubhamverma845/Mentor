@@ -33,10 +33,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/user/*").hasAnyAuthority("LEARNER","MENTOR")
 //        .and().formLogin();
 
+        //Permit all
+        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/**").permitAll();
 
         //Basic Auth
-        httpSecurity.httpBasic().and().authorizeRequests()
-                .antMatchers("/user/*").hasAnyAuthority("LEARNER","MENTOR");
+//        httpSecurity.httpBasic().and().authorizeRequests()
+//                .antMatchers("/user/*").hasAnyAuthority("LEARNER","MENTOR");
     }
 
 

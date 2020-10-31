@@ -2,11 +2,10 @@ package com.sirion.userMicroservice.Model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Entity
@@ -46,6 +45,7 @@ public class User {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     Date regDate;
 
+    @Pattern(regexp = "\\d{10}")
     @Column
     String contactNo;
 
@@ -57,12 +57,14 @@ public class User {
                 @NotNull String firstName,
                 @NotNull String username,
                 @NotNull String lastName,
-                @NotNull String lORm) {
+                @NotNull String lORm,
+                String contactNo) {
         this.password = password;
         this.firstName = firstName;
         this.username = username;
         this.lastName = lastName;
         this.lORm = lORm;
+        this.contactNo = contactNo;
     }
 
 

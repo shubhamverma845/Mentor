@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
-
     public MyUserDetails() {
     }
 
@@ -29,6 +28,7 @@ public class MyUserDetails implements UserDetails {
     public String username;
     public String password;
     private List<GrantedAuthority> authorityList;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

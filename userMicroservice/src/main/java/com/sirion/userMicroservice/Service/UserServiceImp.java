@@ -46,7 +46,8 @@ public class UserServiceImp implements UserService {
                 userDto.getFirstName(),
                 userDto.getUsername(),
                 userDto.getLastName(),
-                userDto.getlORm());
+                userDto.getlORm(),
+                userDto.getContactNo());
 
         return userRepository.save(user);
 

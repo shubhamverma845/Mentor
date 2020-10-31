@@ -7,6 +7,8 @@ public class UserDto {
     String username;
     String password;
     String lORm;
+    String contactNo;
+
 
     public UserDto() {
     }
@@ -17,6 +19,15 @@ public class UserDto {
         this.username = username;
         this.password = password;
         this.lORm = lORm;
+    }
+
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 
     public String getFirstName() {
