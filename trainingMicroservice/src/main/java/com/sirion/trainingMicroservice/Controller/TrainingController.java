@@ -1,16 +1,20 @@
 package com.sirion.trainingMicroservice.Controller;
 
 
+import com.sirion.trainingMicroservice.Model.Payment;
 import com.sirion.trainingMicroservice.Model.Training;
 import com.sirion.trainingMicroservice.Service.TrainingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -60,13 +64,14 @@ public class TrainingController {
     @PutMapping(value = "/approveTraining/{id}", headers = "Accept=application/json")
     public ResponseEntity<String> approveTraining(@PathVariable("id") long id){
 
-        if (trainingService.findById(id) == null){
+        try {
+            trainingService.findById(id);
+            trainingService.updateStatusById(id);
+            return new ResponseEntity<>("Training Approved", HttpStatus.OK);
+        } catch (Exception e){
             logger.warn("Invalid Training ID");
             return new ResponseEntity<>("Invalid Training Id", HttpStatus.NOT_FOUND);
         }
-
-        trainingService.updateStatusById(id);
-        return new ResponseEntity<>("Training Approved", HttpStatus.OK);
     }
 
 
@@ -74,35 +79,40 @@ public class TrainingController {
     @PutMapping(value = "/finalizeTraining/{id}", headers = "Accept=application/json")
     public ResponseEntity<String> finalizeTraining(@PathVariable("id") long id){
 
-        Training training = trainingService.findById(id);
-        if(training == null){
+        try {
+            Training training = trainingService.findById(id);
+            trainingService.finalizeTrainingById(id);
+
+            //sending payment details
+            doPayment(training.getId(), training.getUserId(), training.getMentorId(), training.getId(), 42069);
+
+            return new ResponseEntity<>("Training Completed", HttpStatus.OK);
+        } catch (NoSuchElementException e){
             logger.warn("Invalid Training ID");
             return new ResponseEntity<>("Invalid Training Id", HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            logger.warn("Connection refused from Payment Portal");
+            return new ResponseEntity<>("Connection refused from payment portal!!", HttpStatus.BAD_GATEWAY);
         }
-
-        trainingService.finalizeTrainingById(id);
-        return new ResponseEntity<>("Training Completed", HttpStatus.OK);
     }
 
     //get training through id
     @GetMapping(value = "/getTraining/{id}", headers = "Accept=application/json")
     public ResponseEntity<Training> getTrainingById(@PathVariable("id") long id){
 
-        Training training = trainingService.findById(id);
-
-        if(training == null){
+        try {
+            Training training = trainingService.findById(id);
+            return new ResponseEntity<>(training, HttpStatus.OK);
+        } catch (Exception e){
             logger.warn("Invalid Training Id");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<>(training, HttpStatus.OK);
     }
 
 
     //get completed trainings by userId
     @GetMapping(value = "/getCompletedTrainingsByUserId/{userId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getCompletedTrainingsByUserId(@PathVariable("userId") long userId){
-
         List<Training> trainings = trainingService.findCompletedTrainingsByUserId(userId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
@@ -132,5 +142,35 @@ public class TrainingController {
 
         List<Training> trainings = trainingService.findUnderProgressTrainingsByMentorId(mentorId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
+    }
+
+
+    //payment function
+    public void doPayment(long id, long userId, long mentorId, long tid, long amount){
+
+        logger.info("Processing payment for Training ID:" + tid);
+
+        RestTemplate restTemplate = new RestTemplate();
+        final String baseUrl = "http://localhost:8965/payment/createPayment";
+
+        URI uri =  null;
+        try {
+            uri = new URI(baseUrl);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        Payment payment = new Payment(Long.toString(id),
+                Long.toString(userId),
+                Long.toString(mentorId),
+                Long.toString(tid),
+                Long.toString(amount));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Payment> entity = new HttpEntity<>(payment,headers);
+
+        assert uri != null;
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
     }
 }
