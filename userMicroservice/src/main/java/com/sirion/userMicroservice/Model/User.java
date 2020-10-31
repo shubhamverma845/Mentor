@@ -1,11 +1,13 @@
 package com.sirion.userMicroservice.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @DynamicInsert
@@ -32,12 +34,21 @@ public class User {
     @Column
     String lastName;
 
-    @ColumnDefault("true")
+    @Column(columnDefinition = "boolean default true")
     boolean active;
 
     @NotNull
     @Column
     String lORm;
+
+    @Column(columnDefinition = "timestamp without time zone default current_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    Date regDate;
+
+    @Column
+    String contactNo;
+
 
     public User() {
     }
@@ -52,6 +63,23 @@ public class User {
         this.username = username;
         this.lastName = lastName;
         this.lORm = lORm;
+    }
+
+
+    public Date getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
+    }
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 
     public String getUsername() {

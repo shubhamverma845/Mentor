@@ -11,6 +11,6 @@ public interface TechnologyService {
     List<Technology> getAllTechnology();
     void deleteTechnologyById(long id);
     Technology updateTechnology(Technology technology);
-    List<Technology> getTechnologies(Integer pageNo, Integer pageSize, String sortBy, String ord);
+    List<Technology> getTechnologies(String sortBy, Integer pageSize, Integer pageNo);
     List<Technology> findByName(String name);
 }

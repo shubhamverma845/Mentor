@@ -3,8 +3,9 @@ package com.sirion.searchMicroservice.Controller;
 
 import com.sirion.searchMicroservice.Model.Mentor;
 import com.sirion.searchMicroservice.Service.MentorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,65 +13,68 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/mentor")
 public class MentorController {
+
+    Logger logger = LoggerFactory.getLogger(MentorController.class);
 
     @Autowired
     MentorService mentorService;
 
+
+    //get all mentors
     @GetMapping(value = "/getAllMentors", headers = "Accept=application/json")
     public List<Mentor> getAllMentor(){
         return mentorService.getAllMentor();
     }
 
+
+    //get mentor by mentorId
     @GetMapping(value = "/{id}", headers = "Accept=application/json")
     public ResponseEntity<Mentor> getMentorById(@PathVariable("id") long id){
-        Mentor mentor = mentorService.findById(id);
 
-        if(mentor == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            return new ResponseEntity<Mentor>(mentorService.findById(id), HttpStatus.OK);
+        } catch (Exception e){
+            logger.warn("Invalid Mentor Id");
+            return new ResponseEntity<Mentor>(HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<>(mentor, HttpStatus.OK);
     }
 
+
+    //create mentor
     @PostMapping(value = "/createMentor", headers = "Accept=application/json")
-    public ResponseEntity<Void> createMentor(@RequestBody Mentor mentor){
-
+    public ResponseEntity<String> createMentor(@RequestBody Mentor mentor){
         mentorService.createMentor(mentor);
-        HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>("Mentor Created with Mentor ID:" + mentor.getId(), HttpStatus.CREATED);
     }
 
+
+    //create multiple mentors
     @PostMapping(value = "/createMultipleMentors", headers = "Accept=application/json")
-    public ResponseEntity<Void> createMultipleMentors(@RequestBody List<Mentor> mentors){
-        System.out.println("Creating Mentors........");
+    public ResponseEntity<String> createMultipleMentors(@RequestBody List<Mentor> mentors){
+
         for (Mentor mentor: mentors){
             mentorService.createMentor(mentor);
         }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("Mentors Created", HttpStatus.CREATED);
     }
 
+
+    //delete mentor by mentorId
     @DeleteMapping(value = "/deleteMentor/{id}", headers = "Accept=application/json")
-    public ResponseEntity<Mentor> deleteMentor(@PathVariable("id") long id){
-        Mentor mentor = mentorService.findById(id);
-        if (mentor == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<String> deleteMentor(@PathVariable("id") long id){
         mentorService.deleteMentorById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Mentor deleted with ID:" + id, HttpStatus.NO_CONTENT);
     }
 
+
+    //update mentor
     @PutMapping(value = "/updateMentor", headers = "Accept=application/json")
     public ResponseEntity<String> updateMentor(@RequestBody Mentor currentMentor){
-
-        Mentor mentor = mentorService.findById(currentMentor.getId());
-        if (mentor == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
         mentorService.updateMentor(currentMentor);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Mentor details updated!!", HttpStatus.OK);
     }
 }

@@ -6,10 +6,9 @@ import com.sirion.skillsMicroservice.Repository.TechnologyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,7 +41,6 @@ public class TechnologyServiceImp implements TechnologyService {
 
     @Override
     public List<Technology> findByName(String name){
-//        System.out.println("fffff");
         return technologyRepository.findByTechName(name);
     }
 
@@ -52,9 +50,16 @@ public class TechnologyServiceImp implements TechnologyService {
     }
 
     @Override
-    public List<Technology> getTechnologies(Integer pageNo, Integer pageSize, String sortBy, String ord) {
+    public List<Technology> getTechnologies(String sortBy, Integer pageSize, Integer pageNo) {
 
-        return technologyRepository.getTechnologies(pageNo, pageSize, sortBy, ord);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
+        Page<Technology> page = technologyRepository.findAll(pageable);
+
+        if (page.hasContent()){
+            return page.getContent();
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

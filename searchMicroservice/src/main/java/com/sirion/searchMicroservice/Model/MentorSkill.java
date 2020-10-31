@@ -1,9 +1,7 @@
 package com.sirion.searchMicroservice.Model;
 
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-
 import javax.persistence.*;
 
 @Entity
@@ -21,11 +19,12 @@ public class MentorSkill {
     @Column
     long skillId;
 
-    @ColumnDefault("2.5")
+    @Column(columnDefinition = "real default 2.5")
     float rating;
 
-    @ColumnDefault("0")
+    @Column(columnDefinition = "bigint default 0")
     long trainingsDelivered;
+
 
     public long getId() {
         return id;

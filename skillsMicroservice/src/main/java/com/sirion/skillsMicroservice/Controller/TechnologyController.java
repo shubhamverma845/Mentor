@@ -10,8 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -125,10 +123,9 @@ public class TechnologyController {
     public ResponseEntity<List<Technology>> getTechnologies(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String ord)
+            @RequestParam(defaultValue = "id") String sortBy)
     {
-        List<Technology> list = technologyService.getTechnologies(pageNo, pageSize, sortBy, ord);
+        List<Technology> list = technologyService.getTechnologies(sortBy, pageSize, pageNo);
 
         return new ResponseEntity<>(list, new HttpHeaders(), HttpStatus.OK);
     }

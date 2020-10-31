@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class MentorServiceImp implements MentorService {
@@ -25,7 +26,7 @@ public class MentorServiceImp implements MentorService {
     }
 
     @Override
-    public Mentor findById(long id) {
+    public Mentor findById(long id) throws NoSuchElementException{
         return mentorRepository.findById(id).get();
     }
 
