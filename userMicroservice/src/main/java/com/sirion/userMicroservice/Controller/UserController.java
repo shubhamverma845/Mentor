@@ -3,12 +3,20 @@ package com.sirion.userMicroservice.Controller;
 
 import com.sirion.userMicroservice.Dto.MentorPOJO;
 import com.sirion.userMicroservice.Dto.UserDto;
+import com.sirion.userMicroservice.Model.AuthenticationRequest;
+import com.sirion.userMicroservice.Model.AuthenticationResponse;
 import com.sirion.userMicroservice.Model.User;
+import com.sirion.userMicroservice.Service.MyUserDetailsService;
 import com.sirion.userMicroservice.Service.UserService;
+import com.sirion.userMicroservice.Util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,6 +36,15 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    MyUserDetailsService myUserDetailsService;
+
+    @Autowired
+    JwtUtil jwtTokenUtil;
 
 
     //createUser
@@ -57,7 +74,8 @@ public class UserController {
             createMentor(mentorPOJO);
         }
 
-        return new ResponseEntity<>("User Created with ID:" + user.getId(), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("User Created with ID:%d and Username:%s", user.getId(),user.getUsername()),
+                HttpStatus.OK);
     }
 
 

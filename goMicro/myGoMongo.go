@@ -62,10 +62,9 @@ func deletePayment(w http.ResponseWriter, req *http.Request) {
 
 	filter := bson.M{"id": idval}
 
-	_, err = collection.DeleteOne(context.TODO(), filter)
+	_ , err = collection.DeleteOne(context.TODO(), filter)
 
 	json.NewEncoder(w).Encode("Payment Deleted")
-
 }
 
 func getPayment(w http.ResponseWriter, req *http.Request) {

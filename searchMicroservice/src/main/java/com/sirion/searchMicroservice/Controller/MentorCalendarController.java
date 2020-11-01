@@ -46,7 +46,7 @@ public class MentorCalendarController {
     @PostMapping(value = "/createMentorCalendar", headers = "Accept=application/json")
     public ResponseEntity<String> createMentorCalendar(@RequestBody MentorCalendar mentorCalendar){
 
-        System.out.println(mentorCalendar.getStartTime());
+        System.out.println(mentorCalendar.getStartDate());
 
         mentorCalendarService.createMentorCalendar(mentorCalendar);
         return new ResponseEntity<>("Mentor Calendar Created with ID:" + mentorCalendar.getId(), HttpStatus.CREATED);
