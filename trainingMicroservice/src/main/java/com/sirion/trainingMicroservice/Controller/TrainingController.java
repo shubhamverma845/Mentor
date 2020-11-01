@@ -84,9 +84,13 @@ public class TrainingController {
             trainingService.finalizeTrainingById(id);
 
             //sending payment details
-            doPayment(training.getId(), training.getUserId(), training.getMentorId(), training.getId(), 42069);
+            String paymentId = doPayment(training.getId(),
+                    training.getUserId(),
+                    training.getMentorId(),
+                    training.getId(),
+                    42069);
 
-            return new ResponseEntity<>("Training Completed", HttpStatus.OK);
+            return new ResponseEntity<>("Training Completed\n" + "Payment ID::" + paymentId, HttpStatus.OK);
         } catch (NoSuchElementException e){
             logger.warn("Invalid Training ID");
             return new ResponseEntity<>("Invalid Training Id", HttpStatus.NOT_FOUND);
@@ -146,7 +150,7 @@ public class TrainingController {
 
 
     //payment function
-    public void doPayment(long id, long userId, long mentorId, long tid, long amount){
+    public String doPayment(long id, long userId, long mentorId, long tid, long amount){
 
         logger.info("Processing payment for Training ID:" + tid);
 
@@ -172,5 +176,7 @@ public class TrainingController {
 
         assert uri != null;
         ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+
+        return result.getBody();
     }
 }
