@@ -12,7 +12,7 @@ public interface TrainingRepository extends JpaRepository<Training, Long>{
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE training_table SET approved = TRUE, start_date = CURRENT_TIMESTAMP WHERE id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE training_table SET approved = TRUE, under_progress = TRUE, start_date = CURRENT_TIMESTAMP WHERE id = ?1", nativeQuery = true)
     void updateStatusById(long id);
 
     @Transactional
@@ -21,8 +21,10 @@ public interface TrainingRepository extends JpaRepository<Training, Long>{
     void updateUnderProgressById(long id);
 
 
-    List<Training> findByUserIdAndUnderProgressFalse(long userId);
-    List<Training> findByMentorIdAndUnderProgressFalse(long mentorId);
-    List<Training> findByUserIdAndUnderProgressTrue(long userId);
-    List<Training> findByMentorIdAndUnderProgressTrue(long mentorId);
+    List<Training> findByUserIdAndUnderProgressFalseAndApprovedTrue(long userId);
+    List<Training> findByMentorIdAndUnderProgressFalseAndApprovedTrue(long mentorId);
+    List<Training> findByUserIdAndUnderProgressTrueAndApprovedTrue(long userId);
+    List<Training> findByMentorIdAndUnderProgressTrueAndApprovedTrue(long mentorId);
+    List<Training> findByUserIdAndApprovedFalse(long userId);
+    List<Training> findByMentorIdAndApprovedFalse(long mentorID);
 }

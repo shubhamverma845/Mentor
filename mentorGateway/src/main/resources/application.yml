@@ -9,6 +9,7 @@ server:
      
 #Routing Endpoints
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
   routes:
     skill-microservice:
       url: http://localhost:8961

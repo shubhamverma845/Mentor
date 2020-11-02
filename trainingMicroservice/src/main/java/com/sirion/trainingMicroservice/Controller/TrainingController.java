@@ -1,6 +1,7 @@
 package com.sirion.trainingMicroservice.Controller;
 
 
+import com.sirion.trainingMicroservice.Model.EmailObj;
 import com.sirion.trainingMicroservice.Model.Payment;
 import com.sirion.trainingMicroservice.Model.Training;
 import com.sirion.trainingMicroservice.Service.TrainingService;
@@ -90,6 +91,9 @@ public class TrainingController {
                     training.getId(),
                     42069);
 
+            //sending email
+            sendEmail("shubhamverma845@gmail.com");
+
             return new ResponseEntity<>("Training Completed\n" + "Payment ID::" + paymentId, HttpStatus.OK);
         } catch (NoSuchElementException e){
             logger.warn("Invalid Training ID");
@@ -99,6 +103,7 @@ public class TrainingController {
             return new ResponseEntity<>("Connection refused from payment portal!!", HttpStatus.BAD_GATEWAY);
         }
     }
+
 
     //get training through id
     @GetMapping(value = "/getTraining/{id}", headers = "Accept=application/json")
@@ -117,7 +122,7 @@ public class TrainingController {
     //get completed trainings by userId
     @GetMapping(value = "/getCompletedTrainingsByUserId/{userId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getCompletedTrainingsByUserId(@PathVariable("userId") long userId){
-        List<Training> trainings = trainingService.findCompletedTrainingsByUserId(userId);
+        List<Training> trainings = trainingService.findCompletedTrainingsByUserIdAndApprovedTrue(userId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
@@ -126,7 +131,7 @@ public class TrainingController {
     @GetMapping(value = "/getCompletedTrainingsByMentorId/{mentorId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getCompletedTrainingsByMentorId(@PathVariable("mentorId") long mentorId){
 
-        List<Training> trainings = trainingService.findCompletedTrainingsByMentorId(mentorId);
+        List<Training> trainings = trainingService.findCompletedTrainingsByMentorIdAndApprovedTrue(mentorId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
@@ -135,7 +140,7 @@ public class TrainingController {
     @GetMapping(value = "/getUnderProgressTrainingsByUserId/{userId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getUnderProgressTrainingsByUserId(@PathVariable("userId") long userId){
 
-        List<Training> trainings = trainingService.findUnderProgressTrainingsByUserId(userId);
+        List<Training> trainings = trainingService.findUnderProgressTrainingsByUserIdAndApprovedTrue(userId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
@@ -144,10 +149,26 @@ public class TrainingController {
     @GetMapping(value = "/getUnderProgressTrainingsByMentorId/{mentorId}", headers = "Accept=application/json")
     public ResponseEntity<List<Training>> getUnderProgressTrainingsByMentorId(@PathVariable("mentorId") long mentorId){
 
-        List<Training> trainings = trainingService.findUnderProgressTrainingsByMentorId(mentorId);
+        List<Training> trainings = trainingService.findUnderProgressTrainingsByMentorIdAndApprovedTrue(mentorId);
         return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
+
+    //get not approved trainings by userId
+    @GetMapping(value = "/getNotApprovedTrainingsByUserId/{userId}", headers = "Accept=application/json")
+    public ResponseEntity<List<Training>> getNotApprovedTrainingsByUserId(@PathVariable("userId") long userId){
+
+        List<Training> trainings = trainingService.findNotApprovedTrainingsByUserId(userId);
+        return new ResponseEntity<>(trainings, HttpStatus.OK);
+    }
+
+    //get not approved trainings by mentorId
+    @GetMapping(value = "/getNotApprovedTrainingsByMentorId/{mentorId}", headers = "Accept=application/json")
+    public ResponseEntity<List<Training>> getNotApprovedTrainingsByMentorId(@PathVariable("mentorId") long mentorId){
+
+        List<Training> trainings = trainingService.findNotApprovedTrainingsByMentorId(mentorId);
+        return new ResponseEntity<>(trainings, HttpStatus.OK);
+    }
 
     //payment function
     public String doPayment(long id, long userId, long mentorId, long tid, long amount){
@@ -178,5 +199,33 @@ public class TrainingController {
         ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
         return result.getBody();
+    }
+
+
+    //email function
+    public void sendEmail(String email){
+
+        logger.info("Sending mail!!!!");
+
+        RestTemplate restTemplate = new RestTemplate();
+        final String baseUrl = "http://localhost:8966/v1/notification/textemail";
+
+        URI uri =  null;
+        try {
+            uri = new URI(baseUrl);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        EmailObj emailObj = new EmailObj(email, "Some Subject", "Some Body");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<EmailObj> entity = new HttpEntity<>(emailObj,headers);
+
+        assert uri != null;
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+
+//        return result.getBody();
     }
 }

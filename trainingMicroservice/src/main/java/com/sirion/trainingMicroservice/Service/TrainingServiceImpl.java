@@ -30,13 +30,13 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<Training> findCompletedTrainingsByUserId(long id) {
-        return trainingRepository.findByUserIdAndUnderProgressFalse(id);
+    public List<Training> findCompletedTrainingsByUserIdAndApprovedTrue(long id) {
+        return trainingRepository.findByUserIdAndUnderProgressFalseAndApprovedTrue(id);
     }
 
     @Override
-    public List<Training> findCompletedTrainingsByMentorId(long mentorId) {
-        return trainingRepository.findByMentorIdAndUnderProgressFalse(mentorId);
+    public List<Training> findCompletedTrainingsByMentorIdAndApprovedTrue(long mentorId) {
+        return trainingRepository.findByMentorIdAndUnderProgressFalseAndApprovedTrue(mentorId);
     }
 
     @Override
@@ -50,12 +50,22 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<Training> findUnderProgressTrainingsByUserId(long userId) {
-        return trainingRepository.findByUserIdAndUnderProgressTrue(userId);
+    public List<Training> findUnderProgressTrainingsByUserIdAndApprovedTrue(long userId) {
+        return trainingRepository.findByUserIdAndUnderProgressTrueAndApprovedTrue(userId);
     }
 
     @Override
-    public List<Training> findUnderProgressTrainingsByMentorId(long mentorId) {
-        return trainingRepository.findByMentorIdAndUnderProgressTrue(mentorId);
+    public List<Training> findNotApprovedTrainingsByUserId(long userId) {
+        return  trainingRepository.findByUserIdAndApprovedFalse(userId);
+    }
+
+    @Override
+    public List<Training> findNotApprovedTrainingsByMentorId(long mentorId) {
+        return trainingRepository.findByMentorIdAndApprovedFalse(mentorId);
+    }
+
+    @Override
+    public List<Training> findUnderProgressTrainingsByMentorIdAndApprovedTrue(long mentorId) {
+        return trainingRepository.findByMentorIdAndUnderProgressTrueAndApprovedTrue(mentorId);
     }
 }
