@@ -2,6 +2,7 @@ package com.sirion.searchMicroservice.Controller;
 
 
 import com.sirion.searchMicroservice.Model.Mentor;
+import com.sirion.searchMicroservice.Model.MentorDetails;
 import com.sirion.searchMicroservice.Model.MentorSkill;
 import com.sirion.searchMicroservice.Service.MentorService;
 import com.sirion.searchMicroservice.Service.MentorSkillService;
@@ -20,41 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class MentorDetails{
-    String name;
-    long yoe;
-    List<String> skill;
-
-    public MentorDetails(String name, long yoe, List<String> skill) {
-        this.name = name;
-        this.yoe = yoe;
-        this.skill = skill;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getYoe() {
-        return yoe;
-    }
-
-    public void setYoe(long yoe) {
-        this.yoe = yoe;
-    }
-
-    public List<String> getSkill() {
-        return skill;
-    }
-
-    public void setSkill(List<String> skill) {
-        this.skill = skill;
-    }
-}
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -105,7 +71,7 @@ public class MyController {
                     .map(mentorSkill -> getTechnologyName(mentorSkill.getSkillId()) + ", ID:" + mentorSkill.getSkillId())
                     .forEach(skills::add);
 
-            return new ResponseEntity<>(new MentorDetails(mentor.getUsername(),
+            return new ResponseEntity<>(new MentorDetails(mentor.getId(), mentor.getUsername(),
                     mentor.getYearsOfExperience(),
                     skills), HttpStatus.OK);
 

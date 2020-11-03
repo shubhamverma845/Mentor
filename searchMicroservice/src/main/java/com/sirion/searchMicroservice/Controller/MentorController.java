@@ -66,8 +66,14 @@ public class MentorController {
     //delete mentor by mentorId
     @DeleteMapping(value = "/deleteMentor/{id}", headers = "Accept=application/json")
     public ResponseEntity<String> deleteMentor(@PathVariable("id") long id){
-        mentorService.deleteMentorById(id);
-        return new ResponseEntity<>("Mentor deleted with ID:" + id, HttpStatus.NO_CONTENT);
+
+        try {
+            mentorService.deleteMentorById(id);
+            return new ResponseEntity<>("Mentor deleted with ID:" + id, HttpStatus.NO_CONTENT);
+        } catch (Exception e){
+            logger.warn("Invalid Mentor ID!!");
+            return new ResponseEntity<>("Invalid Mentor ID!!", HttpStatus.NOT_FOUND);
+        }
     }
 
 
